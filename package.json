@@ -1,0 +1,26 @@
+{
+  "name": "headless-graphql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "wpe-build": "echo \"WPE BUILD: skip\" && exit 0",
+    "start": "node ./src/index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vergilius/headless-graphql.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vergilius/headless-graphql/issues"
+  },
+  "homepage": "https://github.com/vergilius/headless-graphql#readme",
+  "dependencies": {
+    "apollo-server-core": "^3.0.0",
+    "apollo-server-express": "^3.0.0",
+    "express": "^4.17.1",
+    "graphql": "^15.5.1"
+  }
+}
