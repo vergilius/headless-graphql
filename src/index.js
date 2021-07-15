@@ -7,41 +7,28 @@ const {
   ApolloServerPluginLandingPageGraphQLPlayground
 } = require('apollo-server-core');
 
+const HeadlessAPI = require('./HeadlessAPI');
+
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
 const typeDefs = gql `
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+  type Region {
+    name: String
+    displayName: String
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
+    regions: [Region]
   }
 `;
-
-const books = [{
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
-
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => books,
+    regions: async (_, __, { dataSources, headers }) => {
+      return dataSources.headlessAPI.getRegions({headers});
+    },
   },
 };
 
@@ -52,7 +39,21 @@ async function startApolloServer(typeDefs, resolvers) {
     typeDefs,
     resolvers,
     introspection: true,
-    plugins: [ApolloServerPluginLandingPageGraphQLPlayground()]
+    plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+    context: ({req}) => {
+      const token = req.headers.authorization || '';
+      
+      return {
+        headers: {
+          authorization: token
+        }
+      };
+    },
+    dataSources: () => {
+      return {
+        headlessAPI: new HeadlessAPI(),
+      };
+    },
   });
 
   // Required logic for integrating with Express
@@ -71,6 +72,7 @@ async function startApolloServer(typeDefs, resolvers) {
   await new Promise(resolve => app.listen({
     port: 4000
   }, resolve));
+  
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 

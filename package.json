@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/vergilius/headless-graphql#readme",
   "dependencies": {
+    "apollo-datasource-http": "^0.15.0",
     "apollo-server-core": "^3.0.0",
     "apollo-server-express": "^3.0.0",
     "express": "^4.17.1",
