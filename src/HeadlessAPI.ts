@@ -1,6 +1,6 @@
 import { Pool } from 'undici';
 import { HTTPDataSource, Request, RequestError } from 'apollo-datasource-http';
-import { Region } from './resolvers-types';
+import { App, Region } from './resolvers-types';
 
 const baseURL = 'https://js.wpengineapi.com';
 const pool = new Pool(baseURL);
@@ -28,6 +28,35 @@ class HeadlessAPI extends HTTPDataSource {
     const regions = response.body.regions;
 
     return regions;
+  }
+
+  async getRegion(name: string, options = {}) {
+    const regions = await this.getRegions(options);
+    const region = regions.find(region => region.name === name);
+
+    return region as Region;
+  }
+  
+  async getApps(accountName: string, options = {}) {
+    const response = await this.get<{ apps: App[] }>(`/v1/accounts/${accountName}/apps`, options);
+    const regions = await this.getRegions(options);
+
+    const apps = response.body.apps.map(app => {
+      const region = regions.find(region => region.name === app.region as string);
+
+      return {
+        ...app,
+        displayName: app.name?.split('/').pop(),
+        region
+      }
+    })
+    return apps;
+  }
+
+  async getApp(accountName: string, appName: string, options = {}) {
+    const response = await this.get<App>(`/v1/accounts/${accountName}/apps/${appName}`, options);
+
+    return response.body;
   }
 }
 

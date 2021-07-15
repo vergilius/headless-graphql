@@ -6,8 +6,22 @@ const schema = gql`
     displayName: String
   }
 
+  type GithubRepository {
+    owner: String
+    name: String
+  }
+
+  type App {
+    name: String!
+    displayName: String!
+    github: GithubRepository!
+    region: Region!
+    createTime: String!
+  }
+
   type Query {
-    regions: [Region]
+    Regions: [Region]
+    Apps(accountName: String!): [App]
   }
 `;
 

@@ -3,6 +3,7 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -12,9 +13,30 @@ export type Scalars = {
   Float: number;
 };
 
+export type App = {
+  __typename?: 'App';
+  name: Scalars['String'];
+  displayName: Scalars['String'];
+  github: GithubRepository;
+  region: Region;
+  createTime: Scalars['String'];
+};
+
+export type GithubRepository = {
+  __typename?: 'GithubRepository';
+  owner?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  regions?: Maybe<Array<Maybe<Region>>>;
+  Regions?: Maybe<Array<Maybe<Region>>>;
+  Apps?: Maybe<Array<Maybe<App>>>;
+};
+
+
+export type QueryAppsArgs = {
+  accountName: Scalars['String'];
 };
 
 export type Region = {
@@ -23,7 +45,8 @@ export type Region = {
   displayName?: Maybe<Scalars['String']>;
 };
 
-
+export type WithIndex<TObject> = TObject & Record<string, any>;
+export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -105,35 +128,57 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = {
+export type ResolversTypes = ResolversObject<{
+  App: ResolverTypeWrapper<App>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  GithubRepository: ResolverTypeWrapper<GithubRepository>;
   Query: ResolverTypeWrapper<{}>;
   Region: ResolverTypeWrapper<Region>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-};
+}>;
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = {
+export type ResolversParentTypes = ResolversObject<{
+  App: App;
+  String: Scalars['String'];
+  GithubRepository: GithubRepository;
   Query: {};
   Region: Region;
-  String: Scalars['String'];
   Boolean: Scalars['Boolean'];
-};
+}>;
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  regions?: Resolver<Maybe<Array<Maybe<ResolversTypes['Region']>>>, ParentType, ContextType>;
-};
+export type AppResolvers<ContextType = any, ParentType extends ResolversParentTypes['App'] = ResolversParentTypes['App']> = ResolversObject<{
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  github?: Resolver<ResolversTypes['GithubRepository'], ParentType, ContextType>;
+  region?: Resolver<ResolversTypes['Region'], ParentType, ContextType>;
+  createTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
-export type RegionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Region'] = ResolversParentTypes['Region']> = {
+export type GithubRepositoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['GithubRepository'] = ResolversParentTypes['GithubRepository']> = ResolversObject<{
+  owner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  Regions?: Resolver<Maybe<Array<Maybe<ResolversTypes['Region']>>>, ParentType, ContextType>;
+  Apps?: Resolver<Maybe<Array<Maybe<ResolversTypes['App']>>>, ParentType, ContextType, RequireFields<QueryAppsArgs, 'accountName'>>;
+}>;
+
+export type RegionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Region'] = ResolversParentTypes['Region']> = ResolversObject<{
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
+}>;
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = any> = ResolversObject<{
+  App?: AppResolvers<ContextType>;
+  GithubRepository?: GithubRepositoryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Region?: RegionResolvers<ContextType>;
-};
+}>;
 
 
 /**
