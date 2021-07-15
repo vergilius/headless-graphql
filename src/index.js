@@ -70,10 +70,10 @@ async function startApolloServer(typeDefs, resolvers) {
 
   // Modified server startup
   await new Promise(resolve => app.listen({
-    port: 4000
+    port: 8080
   }, resolve));
   
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+  console.log(`🚀 Server ready at http://localhost:8080${server.graphqlPath}`);
 }
 
 startApolloServer(typeDefs, resolvers);
