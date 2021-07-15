@@ -19,13 +19,10 @@ const resolvers: Resolvers<Context> = {
   },
   // App: {
   //   region: (app, _, { dataSources, headers }) => {
-  //     return dataSources.headlessAPI.getRegion(app.region, { headers });
+  //     return dataSources.headlessAPI.getRegion(app.region as any as string, { headers });
   //   }
   // }
-  // Region: async (_, __, { dataSources, headers }) => {
-  //   // return dataSources.headlessAPI.getRegion(parent.name, { headers });
-  //   return dataSources.headlessAPI.getRegions({ headers })[0];
-  // },
+  // Region: {},
 };
 
 export default resolvers;

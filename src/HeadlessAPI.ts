@@ -37,19 +37,20 @@ class HeadlessAPI extends HTTPDataSource {
     return region as Region;
   }
   
-  async getApps(accountName: string, options = {}) {
+  async getApps(accountName: string, options = {}): Promise<App[]> {
     const response = await this.get<{ apps: App[] }>(`/v1/accounts/${accountName}/apps`, options);
     const regions = await this.getRegions(options);
 
     const apps = response.body.apps.map(app => {
-      const region = regions.find(region => region.name === app.region as string);
+      const region = regions.find(region => region.name === app.region as string) as Region;
 
       return {
         ...app,
         displayName: app.name?.split('/').pop(),
         region
       }
-    })
+    });
+
     return apps;
   }
 

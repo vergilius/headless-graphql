@@ -12,11 +12,11 @@ const schema = gql`
   }
 
   type App {
-    name: String!
-    displayName: String!
-    github: GithubRepository!
-    region: Region!
-    createTime: String!
+    name: String
+    displayName: String
+    github: GithubRepository
+    region: Region
+    createTime: String
   }
 
   type Query {

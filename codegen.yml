@@ -1,8 +1,6 @@
 schema: http://localhost:8080/graphql
 generates:
   ./src/resolvers-types.ts:
-    config:
-      useIndexSignature: true
     plugins:
       - typescript
       - typescript-resolvers
